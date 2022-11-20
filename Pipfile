@@ -9,6 +9,7 @@ python-dotenv = "*"
 loguru = "*"
 
 [dev-packages]
+win32-setctime = "*"  # fucking broke ass windows
 
 [requires]
 python_version = "3.9"
