@@ -25,8 +25,6 @@ class Events:
 
             logging.log(message.guild.id, message.guild.name, message.author.id, message.author.name, StatsType.chat)
             db.add_stats(message.guild.id, message.author.id, StatsType.chat, 1)
-            # m = ("message received from {}: {}".format(message.author, message.content))
-            # await message.channel.send(m)
             await bot.process_commands(message)  # required for commands to work https://discordpy.readthedocs.io/en/latest/faq.html#why-does-on-message-make-my-commands-stop-working
 
         @bot.event
