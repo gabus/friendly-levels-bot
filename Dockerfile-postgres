@@ -1,0 +1,7 @@
+FROM postgres:15
+
+ENV POSTGRES_PASSWORD friendly-levels
+ENV POSTGRES_USER friendly-levels
+ENV POSTGRES_DB friendly-levels-stats
+
+EXPOSE 5432

@@ -1,17 +1,19 @@
 from loguru import logger
 from src.utils import logging
-from src.utils import datetime_util
-from src.storage import StatsType
-from src.storage import Storage
-from discord.activity import ActivityType
+from src.discord.message import Message
+from src.discord.reaction import Reaction
+from src.discord.voip import Voip
+from src.repositories.repository import Repository
+from psycopg import cursor
+from discord.voice_client import VoiceClient as DiscordVoiceClient
+from discord.member import Member as DiscordMember
+from discord.message import Message as DiscordMessage
+from discord.raw_models import RawReactionActionEvent as DiscordRawReaction
 
 
 class Events:
 
-    def __init__(self, bot, db: Storage):
-
-        voip_time_tracker = {}
-        playing_time_tracker = {}
+    def __init__(self, bot, db: cursor):
 
         @bot.event
         async def on_ready():
@@ -21,55 +23,65 @@ class Events:
                 logger.success('{} (id: {})'.format(guild.name, guild.id))
 
         @bot.event
-        async def on_message(message):
+        async def on_message(message: DiscordMessage):
             if message.author == bot.user:
                 return
 
-            logging.log(message.guild.id, message.guild.name, message.author.id, message.author.name, StatsType.chat)
-            # todo save room id too -- interesting which room chatted the most
-            db.add_stats(message.guild.id, message.author.id, StatsType.chat, 1)
+            m = Message(message).serialize()
+            logging.log("MESSAGE", m.as_dict())
+
+            repo = Repository(db)
+            repo.guild.save(m.channel.guild)
+            repo.channel.save(m.channel)
+            repo.member.save(m.member)
+            repo.message.save(m)
+
             await bot.process_commands(message)  # required for commands to work https://discordpy.readthedocs.io/en/latest/faq.html#why-does-on-message-make-my-commands-stop-working
 
         @bot.event
-        async def on_voice_state_update(member, before, after):
-            key = str(member.guild.id) + '-' + str(member.id)
-            # todo store which channel member is in
+        async def on_raw_reaction_add(payload: DiscordRawReaction):
+            r = Reaction(payload).serialize()
+            logging.log("MESSAGE", r.as_dict())
+
+            repo = Repository(db)
+            repo.guild.save(r.channel.guild)
+            repo.channel.save(r.channel)
+            repo.member.save(r.member)
+            repo.reaction.save(r)
+
+        @bot.event
+        async def on_voice_state_update(member: DiscordMember, before: DiscordVoiceClient, after: DiscordVoiceClient):
+            repo = Repository(db)
+
             if after.channel:
-                logging.log(member.guild.id, member.guild.name, member.id, member.name, StatsType.voip, "joined")
+                v = Voip(member, after, True).serialize()
+                logging.log("VOIP JOINED", v.as_dict())
 
-                if key in voip_time_tracker:
-                    return
+                repo.guild.save(v.guild)
+                repo.member.save(v.member)
+                repo.voip.save(v)
 
-                voip_time_tracker[key] = datetime_util.now()
-            else:
-                logging.log(member.guild.id, member.guild.name, member.id, member.name, StatsType.voip, "left")
-                to_time = datetime_util.now()
-                value = (to_time - voip_time_tracker[key]).total_seconds()
-                db.add_stats(member.guild.id, member.id, StatsType.voip, round(value))
-                del (voip_time_tracker[key])
+            if before.channel:
+                v = Voip(member, before, True).serialize()
+                logging.log("VOIP LEFT", v.as_dict())
 
-        @bot.event
-        async def on_raw_reaction_add(payload):
-            # todo store which emoji is used the most
-            logging.log(payload.guild_id, 'missing', payload.member.id, payload.member.name, StatsType.reaction)
-            db.add_stats(payload.guild_id, payload.member.id, StatsType.reaction, 1)
+                voip = repo.voip.get(before.channel.id, member.id, True)
+                repo.voip.update_is_open(voip, False)
 
-        @bot.event
-        async def on_presence_update(before, after):
-            # todo store which game is being played (or multiple)
-            guild_id = before.guild.id
-            guild_name = before.guild.name
-            member_id = before.id
-            member_name = before.name
-            key = str(before.guild.id) + '-' + str(before.id)
+        # @bot.event
+        # async def on_presence_update(before, after):
+        #     # todo store which game is being played (or multiple)
+        #     guild_id = before.guild.id
+        #     guild_name = before.guild.name
+        #     member_id = before.id
+        #     member_name = before.name
+        #     key = str(before.guild.id) + '-' + str(before.id)
+        #
+        #     activity_found = False
+        #     for activity in after.activities:
+        #         if activity.type == ActivityType.playing:
+        #             print(activity)
+        #             print(activity.application_id)
+        #             print(activity.name)
+        #             activity_found = True
 
-            activity_found = False
-            for activity in after.activities:
-                if activity.type == ActivityType.playing:
-                    print(activity)
-                    print(activity.application_id)
-                    print(activity.name)
-                    activity_found = True
-
-            # if activity_found:
-                # playing_time_tracker[]

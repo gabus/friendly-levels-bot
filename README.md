@@ -19,3 +19,15 @@ cp .env.example .env
 ```commandline
 python main.py
 ```
+
+
+### Running project with docker compose
+```bash
+docker compose up
+```
+
+### Running project with docker compose (if dockerfile is modified)
+```bash
+docker-compose down
+docker compose up --build --force-recreate
+```

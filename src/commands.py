@@ -1,11 +1,9 @@
-from src.storage import Storage
 from src.utils import logging
-from src.storage import StatsType
 
 
 class Commands:
 
-    def __init__(self, bot, db: Storage):
+    def __init__(self, bot, db):
 
         @bot.command(name='getallstats', help='gives back all stats')
         async def get_all_stats(ctx):

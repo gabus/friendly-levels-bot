@@ -7,9 +7,7 @@ name = "pypi"
 "discord.py" = "~=2.1"
 python-dotenv = "*"
 loguru = "*"
-
-[dev-packages]
-win32-setctime = "*"  # fucking broke ass windows
+psycopg = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"
