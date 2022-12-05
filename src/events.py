@@ -69,19 +69,19 @@ class Events:
                 repo.voip.update_is_open(voip, False)
 
         # @bot.event
-        # async def on_presence_update(before, after):
-        #     # todo store which game is being played (or multiple)
-        #     guild_id = before.guild.id
-        #     guild_name = before.guild.name
-        #     member_id = before.id
-        #     member_name = before.name
-        #     key = str(before.guild.id) + '-' + str(before.id)
-        #
-        #     activity_found = False
-        #     for activity in after.activities:
-        #         if activity.type == ActivityType.playing:
-        #             print(activity)
-        #             print(activity.application_id)
-        #             print(activity.name)
-        #             activity_found = True
+        # async def on_presence_update(before: DiscordMember, after: DiscordMember):
+            # todo store which game is being played (or multiple)
+            # guild_id = before.guild.id
+            # guild_name = before.guild.name
+            # member_id = before.id
+            # member_name = before.name
+            # key = str(before.guild.id) + '-' + str(before.id)
+            #
+            # activity_found = False
+            # for activity in after.activities:
+            #     if activity.type == ActivityType.playing:
+            #         print(activity)
+            #         print(activity.application_id)
+            #         print(activity.name)
+            #         activity_found = True
 

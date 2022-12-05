@@ -26,6 +26,6 @@ class FriendlyLevels(discord.Client):
         bot = commands.Bot(command_prefix='!', intents=intents)
 
         Events(bot, session)
-        # Commands(bot, session)
+        Commands(bot, session)
 
         bot.run(token)
