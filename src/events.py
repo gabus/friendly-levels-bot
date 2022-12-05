@@ -64,6 +64,7 @@ class Events:
             if before.channel:
                 v = Voip(member, before, True).serialize()
                 logging.log("VOIP LEFT", v.as_dict())
+                logging.log('member left voip', f'{member=}')  # todo remove this line after debugging
 
                 voip = repo.voip.get(before.channel.id, member.id, True)
                 repo.voip.update_is_open(voip, False)
