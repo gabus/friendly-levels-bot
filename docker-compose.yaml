@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile-bot
     depends_on:
       - postgres
+    volumes: ['.:/friendly-levels-bot']  # remove if live reload not needed
 
   postgres:
     build:

@@ -1,5 +1,8 @@
+import time
 import psycopg
 from psycopg import connection, cursor
+from psycopg import OperationalError
+from loguru import logger
 
 
 class PostgresDatabase:
@@ -9,12 +12,25 @@ class PostgresDatabase:
         self.database = database
         self.user = user
         self.password = password
+        self.connection_retries = 3
 
         self.__connect()
 
     def __connect(self):
-        self.__connection = psycopg.connect(user=self.user, password=self.password, host=self.host, port="5432", dbname=self.database)
-        self.__connection.autocommit = True
+        try:
+            self.__connection = psycopg.connect(user=self.user, password=self.password, host=self.host, port="5432", dbname=self.database)
+            self.__connection.autocommit = True
+        except OperationalError as e:
+            # a workaround for docker compose not building postgres contains first
+
+            logger.warning("Database is not ready.. retrying in one second. Retries left: {}".format(self.connection_retries))
+            self.connection_retries -= 1
+
+            if self.connection_retries < 0:
+                raise e
+
+            time.sleep(1)
+            self.__connect()
 
         self.__cursor = self.__connection.cursor(row_factory=psycopg.rows.dict_row)
 

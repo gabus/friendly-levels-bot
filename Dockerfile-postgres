@@ -4,4 +4,6 @@ ENV POSTGRES_PASSWORD friendly-levels
 ENV POSTGRES_USER friendly-levels
 ENV POSTGRES_DB friendly-levels-stats
 
+ADD migrations/init.sql /docker-entrypoint-initdb.d/
+
 EXPOSE 5432
