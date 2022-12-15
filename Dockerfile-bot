@@ -8,5 +8,4 @@ RUN pip install -r requirements.txt
 # copy is used when volumnes are not mounted. right now it's overwritten
 COPY . .
 
-#CMD ["python", "main.py"]
 CMD ["jurigged", "-v", "main.py"]

@@ -7,6 +7,7 @@ services:
     depends_on:
       - postgres
     volumes: ['.:/friendly-levels-bot']  # remove if live reload not needed
+    tty: true
 
   postgres:
     build:
