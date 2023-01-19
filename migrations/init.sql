@@ -94,6 +94,22 @@ CREATE TABLE public.voip (
 	guild_id int8 NOT NULL
 );
 
+
+-- public.level_weights definition
+
+-- Drop table
+
+-- DROP TABLE public.level_weights;
+
+CREATE TABLE public.level_weights (
+	guild_id int8 NOT NULL,
+	message_weight float4 NOT NULL DEFAULT 1,
+	reaction_weight float4 NOT NULL DEFAULT 2,
+	voip_weight float4 NOT NULL DEFAULT 0.2,
+	CONSTRAINT level_weights_un UNIQUE (guild_id)
+);
+
+
 -- Table Triggers
 
 create trigger update_duration_time_on_update before

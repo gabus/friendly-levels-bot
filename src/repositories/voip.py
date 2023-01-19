@@ -1,6 +1,5 @@
-from src.models.voip import Voip as VoipModel
+from src.models.database.voip import Voip as VoipModel
 from psycopg import cursor
-from loguru import logger
 from src.repositories.serializers.voip import Voip as VoipSerializer
 
 

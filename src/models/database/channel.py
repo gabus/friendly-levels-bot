@@ -1,4 +1,4 @@
-from src.models.guild import Guild
+from src.models.database.guild import Guild
 
 
 class Channel:

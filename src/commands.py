@@ -10,27 +10,71 @@ class Commands:
         repo = Repository(db)
         formatters = Formatters()
 
-        @bot.command(name='rank', help='gives back all stats')
-        async def top_10_rank(ctx):
-            logging.log('rank for', ctx.guild.id)
-            stats = repo.stats.get_top_10_users(ctx.guild.id)
+        @bot.command(name='rank', help='Get back top users')
+        async def top_x_rank(ctx):
+            logging.log('rank', "Guild: {}".format(ctx.guild.id))
+            stats = repo.stats.get_top_x_users(ctx.guild.id, 5)
             await ctx.send(formatters.top_stats(stats))
 
-        @bot.command(name='set-stats-weight', help='set how much messages, reactions, voip and playing matters')
-        async def set_stats_weight(ctx):
-            stats = repo.stats.get_top_10_users(ctx.guild.id)
-            await ctx.send(formatters.top_stats(stats))
-
-        @bot.command(name='get-stats-weight', help='set how much messages, reactions, voip and playing matters')
-        async def get_stats_weight(ctx):
-            # stats = repo.stats.get_top_10_users(ctx.guild.id)
-            await ctx.send("get-stats-weight")
-
-        @bot.command(name='rank-me', help='gives back my stats')
+        @bot.command(name='rank-me', help='Get back my stats')
         async def rank_me(ctx):
-            # todo add #23 which tells ranking position
-            repo.stats.get_my_stats(ctx.guild.id, ctx.author.id)
-            logging.log(ctx.guild.id, ctx.guild.name, ctx.author.id, ctx.author.name, StatsType.chat, "command")
-            stats = db.get_stats_for_member(ctx.guild.id, ctx.author.id)
-            print(stats)
-            await ctx.send(stats)
+            logging.log('rank-me', "Guild: {}, Member: {}".format(ctx.guild.id, ctx.member.id))
+            level_weights = repo.stats.get_my_stats(ctx.guild.id, ctx.member.id)
+            await ctx.send(level_weights())
+
+        @bot.command(name='set-message-weight', help='Set how much messages matters (default 1)')
+        async def set_message_weights(ctx, weight=None):
+            logging.log('set-message-weight for guild_id', ctx.guild.id)
+
+            try:
+                float(weight)
+            except TypeError as te:
+                await ctx.send("need to set a number value")
+                return
+            except ValueError as ve:
+                await ctx.send("value needs to be a number")
+                return
+
+            repo.level_weights.set_message_weight(ctx.guild.id, weight)
+            level_weights = repo.level_weights.get(ctx.guild.id)
+            await ctx.send(level_weights.as_dict())
+
+        @bot.command(name='set-reaction-weight', help='Set how much reaction matters (default 2)')
+        async def set_reaction_weights(ctx, weight=None):
+            logging.log('set-reaction-weight for guild_id', ctx.guild.id)
+
+            try:
+                float(weight)
+            except TypeError as te:
+                await ctx.send("need to set a number value")
+                return
+            except ValueError as ve:
+                await ctx.send("value needs to be a number")
+                return
+
+            repo.level_weights.set_reaction_weight(ctx.guild.id, weight)
+            level_weights = repo.level_weights.get(ctx.guild.id)
+            await ctx.send(level_weights.as_dict())
+
+        @bot.command(name='set-voip-weight', help='Set how much voip matters (default 0.2)')
+        async def set_voip_weights(ctx, weight=None):
+            logging.log('set-voip-weight for guild_id', ctx.guild.id)
+
+            try:
+                float(weight)
+            except TypeError as te:
+                await ctx.send("need to set a number value")
+                return
+            except ValueError as ve:
+                await ctx.send("value needs to be a number")
+                return
+
+            repo.level_weights.set_voip_weight(ctx.guild.id, weight)
+            level_weights = repo.level_weights.get(ctx.guild.id)
+            await ctx.send(level_weights.as_dict())
+
+        @bot.command(name='get-weights', help='get all interaction weights')
+        async def get_weights(ctx):
+            logging.log('get-weights for guild_id', ctx.guild.id)
+            level_weights = repo.level_weights.get(ctx.guild.id)
+            await ctx.send(level_weights.as_dict())

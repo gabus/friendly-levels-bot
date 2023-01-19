@@ -1,4 +1,4 @@
-from src.models.member import Member as MemberModel
+from src.models.database.member import Member as MemberModel
 from psycopg import cursor
 
 

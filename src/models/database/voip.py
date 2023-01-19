@@ -1,5 +1,5 @@
-from src.models.member import Member
-from src.models.guild import Guild
+from src.models.database.member import Member
+from src.models.database.guild import Guild
 
 
 class Voip:

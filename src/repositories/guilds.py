@@ -1,4 +1,4 @@
-from src.models.guild import Guild as GuildModel
+from src.models.database.guild import Guild as GuildModel
 from psycopg import cursor
 
 

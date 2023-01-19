@@ -1,4 +1,4 @@
-from src.models.message import Message as MessageModel
+from src.models.database.message import Message as MessageModel
 from psycopg import cursor
 
 

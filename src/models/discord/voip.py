@@ -1,6 +1,6 @@
-from src.models.voip import Voip as VoipModel
-from src.models.member import Member as MemberModel
-from src.models.guild import Guild as GuildModel
+from src.models.database.voip import Voip as VoipModel
+from src.models.database.member import Member as MemberModel
+from src.models.database.guild import Guild as GuildModel
 from discord.voice_client import VoiceClient as DiscordVoiceClient
 from discord.member import Member as DiscordMember
 

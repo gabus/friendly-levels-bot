@@ -1,7 +1,7 @@
-from src.models.reaction import Reaction as ReactionModel
-from src.models.member import Member as MemberModel
-from src.models.channel import Channel as ChannelModel
-from src.models.guild import Guild as GuildModel
+from src.models.database.reaction import Reaction as ReactionModel
+from src.models.database.member import Member as MemberModel
+from src.models.database.channel import Channel as ChannelModel
+from src.models.database.guild import Guild as GuildModel
 from discord.raw_models import RawReactionActionEvent as DiscordRawReaction
 
 

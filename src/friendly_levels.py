@@ -23,7 +23,7 @@ class FriendlyLevels(discord.Client):
         intents.presences = True
         intents.members = True
 
-        bot = commands.Bot(command_prefix='!', intents=intents)
+        bot = commands.Bot(command_prefix='/', intents=intents)
 
         Events(bot, session)
         Commands(bot, session)

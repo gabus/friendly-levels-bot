@@ -1,4 +1,4 @@
-from src.models.channel import Channel as ChannelModel
+from src.models.database.channel import Channel as ChannelModel
 from psycopg import cursor
 
 

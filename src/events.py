@@ -1,14 +1,15 @@
 from loguru import logger
 from src.utils import logging
-from src.discord.message import Message
-from src.discord.reaction import Reaction
-from src.discord.voip import Voip
+from src.models.discord.message import Message
+from src.models.discord.reaction import Reaction
+from src.models.discord.voip import Voip
 from src.repositories.repository import Repository
 from psycopg import cursor
 from discord.voice_client import VoiceClient as DiscordVoiceClient
 from discord.member import Member as DiscordMember
-from discord.message import Message as DiscordMessage
+from src.models.discord.message import Message as DiscordMessage
 from discord.raw_models import RawReactionActionEvent as DiscordRawReaction
+from src.models.database.guild import Guild as GuildModel
 
 
 class Events:
@@ -19,8 +20,13 @@ class Events:
         async def on_ready():
             logger.success('{} has connected to Discord!'.format(bot.user))
             logger.success('{} is connected to the following guilds:'.format(bot.user))
+            repo = Repository(db)
             for guild in bot.guilds:
                 logger.success('{} (id: {})'.format(guild.name, guild.id))
+
+                # create default level_weights and guild
+                repo.level_weights.create(guild.id)
+                repo.guild.save(GuildModel(guild.id, guild.name))
 
         @bot.event
         async def on_message(message: DiscordMessage):

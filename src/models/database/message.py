@@ -1,5 +1,5 @@
-from src.models.channel import Channel
-from src.models.member import Member
+from src.models.database.channel import Channel
+from src.models.database.member import Member
 
 
 class Message:

@@ -1,4 +1,4 @@
-from src.models.reaction import Reaction as ReactionModel
+from src.models.database.reaction import Reaction as ReactionModel
 from psycopg import cursor
 
 
