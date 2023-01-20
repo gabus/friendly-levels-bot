@@ -15,7 +15,7 @@ class LevelWeights:
 
     def get(self, guild_id: int) -> LevelWeightsModel:
         q = """
-            SELECT lw.message_weight, lw.reaction_weight, lw.voip_weight,
+            SELECT lw.message_weight, lw.reaction_weight, lw.voip_weight, lw.playing_weight,
             g.id as guild_id, g.name as guild_name  
             FROM level_weights lw 
             LEFT JOIN guilds g on g.id = lw.guild_id
@@ -43,5 +43,11 @@ class LevelWeights:
     def set_voip_weight(self, guild_id, weight):
         q = """
             UPDATE level_weights SET voip_weight = {weight} WHERE guild_id={guild_id}
+        """.format(guild_id=guild_id, weight=weight)
+        self.db.execute(q)
+
+    def set_playing_weight(self, guild_id, weight):
+        q = """
+            UPDATE level_weights SET playing_weight = {weight} WHERE guild_id={guild_id}
         """.format(guild_id=guild_id, weight=weight)
         self.db.execute(q)

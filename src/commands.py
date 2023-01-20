@@ -13,7 +13,8 @@ class Commands:
         @bot.command(name='rank', help='Get back top users')
         async def top_x_rank(ctx):
             logging.log('rank', "Guild: {}".format(ctx.guild.id))
-            stats = repo.stats.get_top_x_users(ctx.guild.id, 5)
+            member_ids = [member.id for member in ctx.guild.members]
+            stats = repo.stats.get_top_x_users(ctx.guild.id, member_ids, 5)
             await ctx.send(formatters.top_stats(stats))
 
         @bot.command(name='rank-me', help='Get back my stats')
@@ -70,6 +71,23 @@ class Commands:
                 return
 
             repo.level_weights.set_voip_weight(ctx.guild.id, weight)
+            level_weights = repo.level_weights.get(ctx.guild.id)
+            await ctx.send(level_weights.as_dict())
+
+        @bot.command(name='set-playing-weight', help='Set how much playing matters (default 0)')
+        async def set_playing_weights(ctx, weight=None):
+            logging.log('set-voip-weight for guild_id', ctx.guild.id)
+
+            try:
+                float(weight)
+            except TypeError as te:
+                await ctx.send("need to set a number value")
+                return
+            except ValueError as ve:
+                await ctx.send("value needs to be a number")
+                return
+
+            repo.level_weights.set_playing_weight(ctx.guild.id, weight)
             level_weights = repo.level_weights.get(ctx.guild.id)
             await ctx.send(level_weights.as_dict())
 

@@ -26,7 +26,6 @@ class MemberPlaying:
             WHERE member_id = {member_id}
             AND game_id = {game_id}
             AND is_playing = True 
-            ON CONFLICT DO NOTHING
         """.format(
             member_id=member_playing.member.id,
             game_id=member_playing.game.id,

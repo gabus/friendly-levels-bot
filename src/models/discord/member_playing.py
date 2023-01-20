@@ -3,6 +3,7 @@ from src.models.database.member import Member as MemberModel
 from src.models.database.game import Game as GameModel
 from discord.member import Member as DiscordMember
 from discord import Activity as DiscordActivity
+from discord import Game as DiscordGame
 
 
 class MemberPlaying:

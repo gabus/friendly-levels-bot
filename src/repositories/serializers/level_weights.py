@@ -13,6 +13,7 @@ class LevelWeights:
             g,
             self.level_weights['message_weight'],
             self.level_weights['reaction_weight'],
-            self.level_weights['voip_weight']
+            self.level_weights['voip_weight'],
+            self.level_weights['playing_weight']
         )
         return lv

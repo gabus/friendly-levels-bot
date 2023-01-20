@@ -106,6 +106,7 @@ CREATE TABLE public.level_weights (
 	message_weight float4 NOT NULL DEFAULT 1,
 	reaction_weight float4 NOT NULL DEFAULT 2,
 	voip_weight float4 NOT NULL DEFAULT 0.2,
+	playing_weight float4 NOT NULL DEFAULT 0,
 	CONSTRAINT level_weights_un UNIQUE (guild_id)
 );
 
