@@ -9,9 +9,11 @@ class Voip:
         self.db = db
 
     def save(self, voip: VoipModel):
-        q = "INSERT INTO voip (voip_channel_id, is_open, duration_time, member_id, guild_id) " \
-            "VALUES ({voip_channel_id}, {is_open}, {duration_time}, {member_id}, {guild_id})"\
-            .format(voip_channel_id=voip.voip_channel_id, is_open=voip.is_open, duration_time=voip.duration_time, member_id=voip.member.id, guild_id=voip.guild.id)
+        q = """
+            INSERT INTO voip (voip_channel_id, is_open, duration_time, member_id, guild_id) 
+            VALUES ({voip_channel_id}, {is_open}, {duration_time}, {member_id}, {guild_id})
+            ON CONFLICT DO NOTHING
+            """.format(voip_channel_id=voip.voip_channel_id, is_open=voip.is_open, duration_time=voip.duration_time, member_id=voip.member.id, guild_id=voip.guild.id)
         self.db.execute(q)
 
     def update_is_open(self, voip: VoipModel, new_is_open: bool):
@@ -36,7 +38,3 @@ class Voip:
         self.db.execute(q)
         db_row = self.db.fetchone()
         return VoipSerializer(db_row).serialize()
-
-
-
-

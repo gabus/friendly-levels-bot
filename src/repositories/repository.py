@@ -6,6 +6,8 @@ from src.repositories.reaction import Reaction
 from src.repositories.voip import Voip
 from src.repositories.stats import Stats
 from src.repositories.level_weights import LevelWeights
+from src.repositories.games import Game
+from src.repositories.member_playing import MemberPlaying
 from psycopg import cursor
 
 
@@ -20,3 +22,5 @@ class Repository:
         self.voip = Voip(db)
         self.stats = Stats(db)
         self.level_weights = LevelWeights(db)
+        self.game = Game(db)
+        self.member_playing = MemberPlaying(db)

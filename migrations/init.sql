@@ -110,9 +110,44 @@ CREATE TABLE public.level_weights (
 );
 
 
+-- public.games definition
+
+-- Drop table
+
+-- DROP TABLE public.games;
+
+CREATE TABLE public.games (
+	id int8 NOT NULL,
+	"name" varchar NOT NULL,
+	CONSTRAINT games_un UNIQUE (id)
+);
+
+
+-- public.member_playing definition
+
+-- Drop table
+
+-- DROP TABLE public.member_playing;
+
+CREATE TABLE public.member_playing (
+	member_id int8 NOT NULL,
+	game_id int8 NOT NULL,
+	is_playing bool NOT NULL DEFAULT false,
+	duration_time int4 NULL,
+	created_at timestamp NOT NULL DEFAULT now()
+);
+
+
 -- Table Triggers
 
-create trigger update_duration_time_on_update before
+create trigger update_duration_time_on_update_for_voip before
 update
     on
     public.voip for each row execute function update_duration_time();
+
+-- Table Triggers
+
+create trigger update_duration_time_on_update_for_member_playing before
+update
+    on
+    public.member_playing for each row execute function update_duration_time();

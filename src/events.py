@@ -1,15 +1,17 @@
 from loguru import logger
+from psycopg import cursor
 from src.utils import logging
-from src.models.discord.message import Message
 from src.models.discord.reaction import Reaction
 from src.models.discord.voip import Voip
+from src.models.discord.member_playing import MemberPlaying
+from src.models.discord.message import Message
+from src.models.database.guild import Guild as GuildModel
 from src.repositories.repository import Repository
-from psycopg import cursor
 from discord.voice_client import VoiceClient as DiscordVoiceClient
 from discord.member import Member as DiscordMember
-from src.models.discord.message import Message as DiscordMessage
+from discord.message import Message as DiscordMessage
+from discord.activity import ActivityType
 from discord.raw_models import RawReactionActionEvent as DiscordRawReaction
-from src.models.database.guild import Guild as GuildModel
 
 
 class Events:
@@ -37,7 +39,6 @@ class Events:
             logging.log("MESSAGE", m.as_dict())
 
             repo = Repository(db)
-            repo.guild.save(m.channel.guild)
             repo.channel.save(m.channel)
             repo.member.save(m.member)
             repo.message.save(m)
@@ -50,7 +51,6 @@ class Events:
             logging.log("MESSAGE", r.as_dict())
 
             repo = Repository(db)
-            repo.guild.save(r.channel.guild)
             repo.channel.save(r.channel)
             repo.member.save(r.member)
             repo.reaction.save(r)
@@ -63,32 +63,42 @@ class Events:
                 v = Voip(member, after, True).serialize()
                 logging.log("VOIP JOINED", v.as_dict())
 
-                repo.guild.save(v.guild)
                 repo.member.save(v.member)
                 repo.voip.save(v)
 
             if before.channel:
                 v = Voip(member, before, True).serialize()
                 logging.log("VOIP LEFT", v.as_dict())
-                logging.log('member left voip', f'{member=}')  # todo remove this line after debugging
 
                 voip = repo.voip.get(before.channel.id, member.id, True)
                 repo.voip.update_is_open(voip, False)
 
-        # @bot.event
-        # async def on_presence_update(before: DiscordMember, after: DiscordMember):
-            # todo store which game is being played (or multiple)
-            # guild_id = before.guild.id
-            # guild_name = before.guild.name
-            # member_id = before.id
-            # member_name = before.name
-            # key = str(before.guild.id) + '-' + str(before.id)
-            #
-            # activity_found = False
-            # for activity in after.activities:
-            #     if activity.type == ActivityType.playing:
-            #         print(activity)
-            #         print(activity.application_id)
-            #         print(activity.name)
-            #         activity_found = True
+        @bot.event
+        async def on_presence_update(before: DiscordMember, after: DiscordMember):
+            repo = Repository(db)
 
+            # Finished activities
+            for activity in before.activities:
+                if activity.type == ActivityType.playing:
+                    mp = MemberPlaying(activity, before, False).serialize()
+
+                    logging.log("ACTIVITY STOPPED", mp.as_dict())
+
+                    repo.game.save(mp.game)
+                    repo.member.save(mp.member)
+                    repo.member_playing.stop_game(mp)
+
+            # Started and ongoing activities
+            for activity in after.activities:
+                if activity.type == ActivityType.playing:
+                    mp = MemberPlaying(activity, after, True).serialize()
+
+                    logging.log("ACTIVITY STARTED", mp.as_dict())
+
+                    # check if session already exist
+                    if repo.member_playing.session_exits(mp):
+                        continue
+
+                    repo.game.save(mp.game)
+                    repo.member.save(mp.member)
+                    repo.member_playing.start_game(mp)
