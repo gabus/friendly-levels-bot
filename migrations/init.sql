@@ -145,10 +145,3 @@ create trigger update_duration_time_on_update_for_voip before
 update
     on
     public.voip for each row execute function update_duration_time();
-
--- Table Triggers
-
-create trigger update_duration_time_on_update_for_member_playing before
-update
-    on
-    public.member_playing for each row execute function update_duration_time();

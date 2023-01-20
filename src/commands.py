@@ -91,6 +91,12 @@ class Commands:
             level_weights = repo.level_weights.get(ctx.guild.id)
             await ctx.send(level_weights.as_dict())
 
+        @bot.command(name='update-playing-weights', help='debugging')
+        async def update_playing_weights(ctx):
+            logging.log('update-playing-weights for guild', ctx.guild.id)
+            repo.member_playing.update_duration_time()
+            await ctx.send("success")
+
         @bot.command(name='get-weights', help='get all interaction weights')
         async def get_weights(ctx):
             logging.log('get-weights for guild_id', ctx.guild.id)

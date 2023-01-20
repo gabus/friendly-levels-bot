@@ -79,6 +79,10 @@ class Events:
 
             # Finished activities
             for activity in before.activities:
+                """
+                    On MacOS activity is Game class instead of Activity. 
+                    Game class is very limited
+                """
                 if activity.type == ActivityType.playing:
                     mp = MemberPlaying(activity, before, False).serialize()
 

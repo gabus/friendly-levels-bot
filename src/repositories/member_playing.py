@@ -1,5 +1,6 @@
 from src.models.database.member_playing import MemberPlaying as MemberPlayingModel
 from psycopg import cursor
+from src.utils import datetime_util
 
 
 class MemberPlaying:
@@ -22,7 +23,8 @@ class MemberPlaying:
 
     def stop_game(self, member_playing: MemberPlayingModel):
         q = """
-            UPDATE member_playing SET is_playing = False 
+            UPDATE member_playing 
+            SET is_playing = False, duration_time = EXTRACT(EPOCH FROM (now() - created_at)) 
             WHERE member_id = {member_id}
             AND game_id = {game_id}
             AND is_playing = True 
@@ -52,3 +54,7 @@ class MemberPlaying:
             return False
 
         return True
+
+    def update_duration_time(self):
+        q = "UPDATE member_playing SET duration_time = EXTRACT(EPOCH FROM (now() - created_at)) WHERE is_playing = True"
+        self.db.execute(q)
