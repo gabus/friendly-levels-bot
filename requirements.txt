@@ -3,3 +3,4 @@ python-dotenv ~= 0.21
 loguru ~= 0.6
 psycopg ~= 3.1
 jurigged ~= 0.5
+schedule ~= 1.1

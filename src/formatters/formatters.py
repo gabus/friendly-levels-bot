@@ -16,9 +16,9 @@ class Formatters:
             else:
                 prize_emoji = self.medals[3]
 
-            response += prize_emoji + ' ' + stat['member_name'] + '(Score ' + str(round(stat['total_weighted'])) + ')\n'
+            response += prize_emoji + ' ' + stat['member_name'] + ' (score ' + str(round(stat['total_weighted'])) + ')\n'
             response += '     ' + self.metric_emoji['messages'] + ' messages: ' + str(stat['message_count']) + '\n'
-            response += '     ' + self.metric_emoji['reaction'] + ' emoji: '    + str(stat['emoji_count']) + '\n'
+            response += '     ' + self.metric_emoji['reaction'] + ' reacts: '    + str(stat['emoji_count']) + '\n'
             response += '     ' + self.metric_emoji['voip']     + ' voip: '     + str(round(stat['voip_duration'] / 60)) + ' min \n'
             response += '     ' + self.metric_emoji['playing']  + ' playing: '  + str(round(stat['member_playing_duration'] / 60)) + ' min \n'
             response += '\n'

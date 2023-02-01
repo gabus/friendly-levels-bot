@@ -4,6 +4,7 @@ from discord.ext import commands
 from src.events import Events
 from src.commands import Commands
 from src.middleware.database import PostgresDatabase
+from src.crons.update_members_playing_duration import UpdateMembersPlayingDurationCron
 
 
 class FriendlyLevels(discord.Client):
@@ -17,6 +18,8 @@ class FriendlyLevels(discord.Client):
             os.getenv('POSTGRES_PASSWORD'),
         )
         session = db.get_cursor()
+
+        UpdateMembersPlayingDurationCron(session).start()
 
         intents = discord.Intents.default()
         intents.message_content = True
