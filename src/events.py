@@ -48,7 +48,7 @@ class Events:
         @bot.event
         async def on_raw_reaction_add(payload: DiscordRawReaction):
             r = Reaction(payload).serialize()
-            logging.log("MESSAGE", r.as_dict())
+            logging.log("REACTION", r.as_dict())
 
             repo = Repository(db)
             repo.channel.save(r.channel)
@@ -77,11 +77,15 @@ class Events:
         async def on_presence_update(before: DiscordMember, after: DiscordMember):
             repo = Repository(db)
 
+            if before.bot:
+                logging.log("ACTIVITY BOT skipped", "{}: {}".format(before.name, before.activities[0].name))
+                return
+
             # Finished activities
             for activity in before.activities:
                 """
                     On MacOS activity is Game class instead of Activity. 
-                    Game class is very limited
+                    Game class is very limited. No implementation made atm
                 """
                 if activity.type == ActivityType.playing:
                     mp = MemberPlaying(activity, before, False).serialize()

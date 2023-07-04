@@ -2,6 +2,7 @@ from src.utils import logging
 from psycopg import cursor
 from src.repositories.repository import Repository
 from src.formatters.formatters import Formatters
+from src.roles.calculate_roles import CalculateRoles
 
 
 class Commands:
@@ -9,6 +10,7 @@ class Commands:
     def __init__(self, bot, db: cursor):
         repo = Repository(db)
         formatters = Formatters()
+        roles = CalculateRoles(db)
 
         @bot.command(name='rank', help='Get back top users')
         async def top_x_rank(ctx):
@@ -16,6 +18,7 @@ class Commands:
             member_ids = [member.id for member in ctx.guild.members]
             stats = repo.stats.get_top_x_users(ctx.guild.id, member_ids, 5)
             await ctx.send(formatters.top_stats(stats))
+            await roles.reassign_messages(ctx.guild)
 
         @bot.command(name='rank-me', help='Get back my stats')
         async def rank_me(ctx):
@@ -91,9 +94,9 @@ class Commands:
             level_weights = repo.level_weights.get(ctx.guild.id)
             await ctx.send(level_weights.as_dict())
 
-        @bot.command(name='update-playing-weights', help='debugging')
+        @bot.command(name='set-playing-weights', help='debugging')
         async def update_playing_weights(ctx):
-            logging.log('update-playing-weights for guild', ctx.guild.id)
+            logging.log('set-playing-weights for guild', ctx.guild.id)
             repo.member_playing.update_duration_time()
             await ctx.send("success")
 

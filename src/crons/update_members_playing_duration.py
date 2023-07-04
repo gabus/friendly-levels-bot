@@ -11,9 +11,8 @@ class UpdateMembersPlayingDurationCron:
         self.__repo = Repository(db)
 
     def __job(self):
-        logger.debug("{}: updating member_playing_duration".format(self.__class__.__name__))
         self.__repo.member_playing.update_duration_time()
-        logger.debug("{}: success".format(self.__class__.__name__))
+        logger.success("{}: success".format(self.__class__.__name__))
 
     def __cron(self):
         schedule.every(1).minutes.do(self.__job)

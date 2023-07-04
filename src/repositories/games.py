@@ -8,5 +8,5 @@ class Game:
         self.db = db
 
     def save(self, game: GameModel):
-        q = "INSERT INTO games (id, name) VALUES ({id}, %s) ON CONFLICT DO NOTHING".format(id=game.id)
-        self.db.execute(q, (game.name,))
+        q = "INSERT INTO games (id, name) VALUES ({id}, '{name}') ON CONFLICT DO NOTHING".format(id=game.id, name=str(game.name))
+        self.db.execute(q)

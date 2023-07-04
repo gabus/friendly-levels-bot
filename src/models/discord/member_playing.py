@@ -15,6 +15,13 @@ class MemberPlaying:
 
     def serialize(self) -> MemberPlayingModel:
         m = MemberModel(self.member.id, self.member.name)
-        g = GameModel(self.activity.application_id, self.activity.name)
+
+        if type(self.activity) == DiscordActivity:
+            application_id = self.activity.application_id
+        else:
+            # Mac case: Game object doesn't have ID. Generate one from the Name
+            application_id = abs(hash(self.activity.name)) % (10 ** 16)
+
+        g = GameModel(application_id, self.activity.name)
         mp = MemberPlayingModel(m, g, self.is_playing)
         return mp

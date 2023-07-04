@@ -57,3 +57,7 @@ class Voip:
         self.db.execute(q)
         db_row = self.db.fetchone()
         return VoipSerializer(db_row).serialize()
+
+    def update_duration_time(self):
+        q = "UPDATE voip SET duration_time = EXTRACT(EPOCH FROM (now() - created_at)) WHERE is_open = True"
+        self.db.execute(q)
